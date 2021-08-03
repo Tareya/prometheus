@@ -55,3 +55,17 @@ scrape_configs:
     - source_labels: [__meta_consul_service]
       target_label: hostjob  
   
+
+# nfs exporter metrics with consul services discovery.
+- job_name: "consul-nfs-exporter"
+  consul_sd_configs:
+    - server: "192.168.0.32:8500"
+      services: []
+  relabel_configs:
+    - source_labels: [__meta_consul_tags]
+      regex: .*nfs-exporter.*
+      action: keep
+    - regex: __meta_consul_service_metadata_(.+)
+      action: labelmap
+    - source_labels: [__meta_consul_service]
+      target_label: hostjob   
