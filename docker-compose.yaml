@@ -124,7 +124,7 @@ services:
     ports: 
       - "9121:9121"
     command: 
-      - "-redis.addr=redis://${REDIS_ADDR}:${6379}"
+      - "-redis.addr=redis://${REDIS_ADDR}:${REDIS_PORT}"
       - "-redis.password=${REDIS_PASS}"
     networks: 
       - monitor
