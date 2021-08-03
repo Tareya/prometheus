@@ -54,19 +54,20 @@ services:
       - monitor
   
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    hostname: grafana
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - "./grafana/config/grafana.ini:/etc/grafana/grafana.ini"
-      - "./grafana/data:/var/lib/grafana"
-     	- "/etc/localtime:/etc/localtime"
-    networks:
-      - monitor
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   hostname: grafana
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - "./grafana/config/grafana.ini:/etc/grafana/grafana.ini"
+  #     - "./grafana/config/ldap.toml:/etc/grafana/ldap.toml"
+  #     - "./grafana/data:/var/lib/grafana"
+  #    	- "/etc/localtime:/etc/localtime"
+  #   networks:
+  #     - monitor
 
 
   node-exporter:
