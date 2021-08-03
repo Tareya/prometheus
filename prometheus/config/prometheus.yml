@@ -69,3 +69,33 @@ scrape_configs:
       action: labelmap
     - source_labels: [__meta_consul_service]
       target_label: hostjob   
+
+
+# mysqld exporter metrics with consul service discovery.
+- job_name: "consul-mysqld-exporter"
+  consul_sd_configs:
+    - server: "192.168.0.32:8500"
+      services: []
+  relabel_configs:
+    - source_labels: [__meta_consul_tags]
+      regex: .*mysqld-exporter.*
+      action: keep
+    - regex: __meta_consul_service_metadata_(.+)
+      action: labelmap
+    - source_labels: [__meta_consul_service]
+      target_label: hostjob   
+
+
+# redis exporter metrics with consul service discovery.
+- job_name: "consul-redis-exporter"
+  consul_sd_configs:
+    - server: "192.168.0.32:8500"
+      services: []
+  relabel_configs:
+    - source_labels: [__meta_consul_tags]
+      regex: .*redis-exporter.*
+      action: keep
+    - regex: __meta_consul_service_metadata_(.+)
+      action: labelmap
+    - source_labels: [__meta_consul_service]
+      target_label: hostjob   
