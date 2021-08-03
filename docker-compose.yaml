@@ -14,7 +14,7 @@ services:
     volumes: 
       - "./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
       - "./alertmanager/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml:ro"
-      - "./prometheus/data:/prometheus"
+      - "./prometheus/data:/prometheus:rw"
       - "/etc/localtime:/etc/localtime"
     command: 
       - "--config.file=/etc/prometheus/prometheus.yml"
