@@ -12,13 +12,15 @@ services:
     ports: 
       - "9090:9090"
     volumes: 
-      - "./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
-      - "./alertmanager/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml"
+      - "./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "./alertmanager/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml:ro"
       - "./prometheus/data:/prometheus"
       - "/etc/localtime:/etc/localtime"
     command: 
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--log.level=info"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention=15d"
       - "--query.max-concurrency=50"
       - "--web.enable-lifecycle"
     networks: 
