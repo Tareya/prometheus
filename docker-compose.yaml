@@ -137,7 +137,7 @@ services:
     restart: always
     ports: 
       - "9689:9689"
-    args: 
+    command: 
       - "--nfs.address=192.168.0.110"
       - "--nfs.storage-path=/data/conf/nginx"
     networks: 
