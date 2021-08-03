@@ -1,0 +1,82 @@
+groups:
+- name: general.rules
+  rules:
+  - alert: InstenceDown
+    expr: up == 0
+    for: 2m
+    labels:
+      severity: error
+    annotations:
+      summary: "！严重事件！{{ $labels.hostjob }} 宕机"
+      description: "{{ $labels.hostjob }} 已经停止5分钟以上."
+
+- name: memory.rules
+  rules:
+  - alert: HighMemoryUsage1
+    expr: (1 - (node_memory_MemAvailable_bytes{job="consul-node-exporter"} / (node_memory_MemTotal_bytes{job="consul-node-exporter"})))* 100 > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "！重要事件！{{ $labels.hostjob }} 内存使用率 >80%"
+      description: "{{ $labels.hostjob }} 内存使用率 >80% 已经持续10分钟\n当前值是: {{ $value }}%"
+
+  - alert: HighMemoryUsage2
+    expr: (1 - (node_memory_MemAvailable_bytes{job="consul-node-exporter"} / (node_memory_MemTotal_bytes{job="consul-node-exporter"})))* 100 > 90
+    for: 10m
+    labels:
+      severity: error
+    annotations:
+      summary: "！严重事件！{{ $labels.hostjob }} 内存使用率 >90%"
+      description: "{{ $labels.hostjob }} 内存使用率 >90% 已经持续10分钟\n当前值是: {{ $value }}%"
+
+
+- name: cpu.rules
+  rules:
+  - alert: HightCPUUsage1
+    expr: 100 - (avg by (instance)(irate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "！重要事件！{{ $labels.hostjob }} CPU 使用率 > 80%"
+      description: "{{ $labels.hostjob }} CPU 使用率 > 80% 已经持续10分钟\n当前值是: {{ $value }}%"
+
+  - alert: HightCPUUsage2
+    expr: 100 - (avg by (instance)(irate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 90
+    for: 10m
+    labels:
+      severity: error
+    annotations:
+      summary: "！严重事件！{{ $labels.hostjob }} CPU 使用率 > 90%"
+      description: "{{ $labels.hostjob }} CPU 使用率 > 90% 已经持续10分钟\n当前值是: {{ $value }}%"
+
+  - alert: HightLoadUsage
+    expr: node_load1 > 20
+    for: 5m
+    labels:
+      severity: error
+    annotations:
+      summary: "！严重事件！{{$labels.hostjob}} 负载使用过高"
+      description: "{{$labels.hostjob}}: 1分钟内负载使用大于 20\n当前值: {{ $value }}"
+
+
+- name: disk.rules
+  rules:
+  - alert: HightDiskUsage1
+    expr: (node_filesystem_size_bytes{job='consul-node-exporter',mountpoint="/rootfs"}-node_filesystem_free_bytes{job='consul-node-exporter',mountpoint="/rootfs"})*100 /(node_filesystem_avail_bytes {job='consul-node-exporter',mountpoint="/rootfs"}+(node_filesystem_size_bytes{job='consul-node-exporter',mountpoint="/rootfs"}-node_filesystem_free_bytes{job='consul-node-exporter',mountpoint="/rootfs"})) > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "！重要事件！{{ $labels.hostjob }} 磁盘使用率 > 80%"
+      description: "{{ $labels.hostjob }} 磁盘使用率 > 80% 已经持续10分钟\n当前值是: {{ $value }}%"
+
+  - alert: HightDiskUsage2
+    expr: (node_filesystem_size_bytes{job='consul-node-exporter',mountpoint="/rootfs"}-node_filesystem_free_bytes{job='consul-node-exporter',mountpoint="/rootfs"})*100 /(node_filesystem_avail_bytes {job='consul-node-exporter',mountpoint="/rootfs"}+(node_filesystem_size_bytes{job='consul-node-exporter',mountpoint="/rootfs"}-node_filesystem_free_bytes{job='consul-node-exporter',mountpoint="/rootfs"})) > 90
+    for: 10m
+    labels:
+      severity: error  
+    annotations:
+      summary: "！严重事件！{{ $labels.hostjob }} 磁盘使用率 > 90%"
+      description: "{{ $labels.hostjob }} 磁盘使用率 > 90% 已经持续10分钟\n当前值是: {{ $value }}%"

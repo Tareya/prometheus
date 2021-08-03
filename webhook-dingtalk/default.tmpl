@@ -1,0 +1,21 @@
+{{ define "__subject" }}[{{ if eq .Status "firing" }}告警:{{ .Alerts.Firing | len }}{{ else }}恢复{{ end }}]{{ end }}
+
+{{ define "__text_alert_list" }}
+{{ if eq .Status "firing" }}
+{{ range .Alerts.Firing }}
+[告警时间]:{{ .StartsAt.Format "2006-01-02 15:04:05" }}
+{{ range .Annotations.SortedPairs }} - {{ .Value | markdown | html }}
+{{ end }}{{ end }}
+
+{{ else if eq .Status "resolved" }}
+{{ range .Alerts.Resolved }}
+{{ range .Annotations.SortedPairs }} - {{ .Value | markdown | html }}
+{{ end }}{{ end }}
+{{ end }}
+{{ end }}
+
+{{ define "__alertmanagerURL" }}{{ end }}
+{{ define "ding.link.title" }}{{ template "__subject" . }}{{ end }}
+{{ define "ding.link.content" }}#### [{{ if eq .Status "firing" }}告警:{{ .Alerts.Firing | len }}{{ else }}恢复{{ end }}]
+{{ template "__text_alert_list" . }}
+{{ end }}

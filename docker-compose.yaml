@@ -1,0 +1,148 @@
+version: "3"
+networks: 
+    monitor:
+      driver: bridge 
+
+services: 
+  prometheus:
+    image: prom/prometheus:latest 
+    container_name: prometheus 
+    hostname: prometheus 
+    restart: always 
+    ports: 
+      - "9090:9090"
+    volumes: 
+      - "./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./alertmanager/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml"
+      - "./prometheus/data:/prometheus"
+      - "/etc/localtime:/etc/localtime"
+    command: 
+      - "--log.level=info"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention=15d"
+      - "--query.max-concurrency=50"
+      - "--web.enable-lifecycle"
+    networks: 
+      - monitor
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    hostname: alertmanager
+    restart: always
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml" 
+      - "./alertmanager/data:/alertmanager"
+      - "/etc/localtime:/etc/localtime"
+    networks:
+      - monitor
+
+  prometheus-webhook-alert:
+    image: quay.io/timonwong/prometheus-webhook-dingtalk:latest
+    container_name: prometheus-webhook-alertmanagers
+    hostname: webhook-alertmanagers
+    restart: always
+    ports:
+      - "8060:8060"
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "./webhook-dingtalk/default.tmpl:/usr/share/prometheus-webhook-dingtalk/template/default.tmpl"
+    entrypoint: /bin/prometheus-webhook-dingtalk --ding.profile="webhook1=https://oapi.dingtalk.com/robot/send?access_token=1950748493b4f629329e5dc6b2f9ff7f64f15a9980e4404287eb3eb066a2cfce" --template.file=/usr/share/prometheus-webhook-dingtalk/template/default.tmpl
+    networks:
+      - monitor
+  
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana/config/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/data:/var/lib/grafana"
+     	- "/etc/localtime:/etc/localtime"
+    networks:
+      - monitor
+
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    hostname: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    volumes:
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/:/rootfs:ro"
+    networks: 
+      - monitor
+
+
+  # Docker 监控配置
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor-exporter 
+    hostname: cadvisor-exporter
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/data/docker/:/var/lib/docker:ro"
+      - "/dev/disk/:/dev/disk:ro"
+    networks: 
+      - monitor
+
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld-exporter
+    hostname: mysqld-exporter
+    restart: always
+    ports:
+      - "9104:9104"
+    environment:
+      DATA_SOURCE_NAME: "${MYSQL_USER}:${MYSQL_PASS}@(${192.168.0.55}:${MYSQL_PORT})/"
+    networks: 
+      - monitor
+
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter
+    hostname: redis-exporter
+    restart: always
+    ports: 
+      - "9121:9121"
+    command: 
+      - "-redis.addr=redis://${REDIS_ADDR}:${6379}"
+      - "-redis.password=${REDIS_PASS}"
+    networks: 
+      - monitor
+    
+
+  nfs-exporter:
+    image: tareya/nfs_exporter:latest
+    container_name: nfs_exporter
+    hostname: nfs_exporter
+    restart: always
+    ports: 
+      - "9689:9689"
+    args: 
+      - "--nfs.address=192.168.0.110"
+      - "--nfs.storage-path=/data/conf/nginx"
+    networks: 
+      - monitor
+
+
+
+  # keepalived 监控配置
+
