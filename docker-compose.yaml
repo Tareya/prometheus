@@ -49,7 +49,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime"
       - "./webhook-dingtalk/default.tmpl:/usr/share/prometheus-webhook-dingtalk/template/default.tmpl"
-    entrypoint: /bin/prometheus-webhook-dingtalk --ding.profile="webhook1=https://oapi.dingtalk.com/robot/send?access_token=1950748493b4f629329e5dc6b2f9ff7f64f15a9980e4404287eb3eb066a2cfce" --template.file=/usr/share/prometheus-webhook-dingtalk/template/default.tmpl
+    entrypoint: /bin/prometheus-webhook-dingtalk --ding.profile="webhook1=${DING_WEBHOOK}" --template.file=/usr/share/prometheus-webhook-dingtalk/template/default.tmpl
     networks:
       - monitor
   
@@ -138,8 +138,8 @@ services:
     ports: 
       - "9689:9689"
     command: 
-      - "--nfs.address=192.168.0.110"
-      - "--nfs.storage-path=/data/conf/nginx"
+      - "--nfs.address=${NFS_SERVER_ADDR}"
+      - "--nfs.storage-path=${NFS_MOUNTPOINT}"
     networks: 
       - monitor
 
