@@ -17,10 +17,8 @@ services:
       - "./prometheus/data:/prometheus"
       - "/etc/localtime:/etc/localtime"
     command: 
-      - "--log.level=info"
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention=15d"
+      - "--log.level=info"
       - "--query.max-concurrency=50"
       - "--web.enable-lifecycle"
     networks: 
