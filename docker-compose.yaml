@@ -12,9 +12,9 @@ services:
     ports: 
       - "9090:9090"
     volumes: 
-      - "/data/prometheus/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
-      - "/data/prometheus/prometheus/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml"      
-      - "/data/prometheus/prometheus/data:/prometheus"
+      - "./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./prometheus/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml"      
+      - "./prometheus/data:/prometheus"
       - "/etc/localtime:/etc/localtime"
     command: 
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -34,7 +34,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - "/data/prometheus/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml" 
+      - "./alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml" 
       - "/etc/localtime:/etc/localtime"
     networks:
       - monitor
@@ -48,7 +48,7 @@ services:
       - "8060:8060"
     volumes:
       - "/etc/localtime:/etc/localtime"
-      - "/data/prometheus/webhook-dingtalk/default.tmpl:/usr/share/prometheus-webhook-dingtalk/template/default.tmpl"
+      - "./webhook-dingtalk/default.tmpl:/usr/share/prometheus-webhook-dingtalk/template/default.tmpl"
     entrypoint: /bin/prometheus-webhook-dingtalk --ding.profile="webhook1=${DING_WEBHOOK}" --template.file=/usr/share/prometheus-webhook-dingtalk/template/default.tmpl
     networks:
       - monitor
@@ -62,9 +62,9 @@ services:
   #   ports:
   #     - "3000:3000"
   #   volumes:
-  #     - "/data/prometheus/grafana/config/grafana.ini:/etc/grafana/grafana.ini"
-  #     - "/data/prometheus/grafana/config/ldap.toml:/etc/grafana/ldap.toml"
-  #     - "/data/prometheus/grafana/data:/var/lib/grafana"
+  #     - "./grafana/config/grafana.ini:/etc/grafana/grafana.ini"
+  #     - "./grafana/config/ldap.toml:/etc/grafana/ldap.toml"
+  #     - "./grafana/data:/var/lib/grafana"
   #    	- "/etc/localtime:/etc/localtime"
   #   networks:
   #     - monitor
