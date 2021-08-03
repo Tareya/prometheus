@@ -12,8 +12,7 @@ services:
     ports: 
       - "9090:9090"
     volumes: 
-      - "./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-      - "./alertmanager/config/alertmanager-rule.yml:/etc/prometheus/alertmanager-rule.yml:ro"
+      - "./prometheus/config:/etc/prometheus:ro"
       - "./prometheus/data:/prometheus/data:rw"
       - "/etc/localtime:/etc/localtime"
     command: 
@@ -34,7 +33,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - "./alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro" 
+      - "./alertmanager/config:/etc/alertmanager:ro" 
       - "/etc/localtime:/etc/localtime"
     networks:
       - monitor
