@@ -111,7 +111,7 @@ services:
     ports:
       - "9104:9104"
     environment:
-      DATA_SOURCE_NAME: "${MYSQL_USER}:${MYSQL_PASS}@(${192.168.0.55}:${MYSQL_PORT})/"
+      DATA_SOURCE_NAME: "${MYSQL_USER}:${MYSQL_PASS}@(${MYSQL_ADDR}:${MYSQL_PORT})/"
     networks: 
       - monitor
 
